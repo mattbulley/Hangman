@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.*;
 import java.io.*;
 import java.util.Random;
 
@@ -12,9 +13,18 @@ public class main {
 	public static boolean repeat = false;
 	public static String toString = "";
 	public static StringBuilder readout = new StringBuilder();
+	public static List<String> guessed = new ArrayList<String>();
+	public static String name;
+	public static int gamesPlayed;
+	public static int gamesLost;
+	public static int gamesWon;
+	public static float winPercentage;
+	public static int leastGuesses;
+	public static int mostGueses;
+	public static String fileName = "stats.txt";
 	
 	public static char[] alphabet = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-	
+	public static char[] alphabetRef = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 	
  	public static void main(String[] args) {
 		init();
@@ -22,35 +32,20 @@ public class main {
  	
  	public static void init()
  	{
- 		alphabet[0] = 'a';
- 		alphabet[1] = 'b';
- 		alphabet[2] = 'c';
- 		alphabet[3] = 'd';
- 		alphabet[4] = 'e';
- 		alphabet[5] = 'f';
- 		alphabet[6] = 'g';
- 		alphabet[7] = 'h';
- 		alphabet[8] = 'i';
- 		alphabet[9] = 'j';
- 		alphabet[10] = 'k';
- 		alphabet[11] = 'l';
- 		alphabet[12] = 'm';
- 		alphabet[13] = 'n';
- 		alphabet[14] = 'o';
- 		alphabet[15] = 'p';
- 		alphabet[16] = 'q';
- 		alphabet[17] = 'r';
- 		alphabet[18] = 's';
- 		alphabet[19] = 't';
- 		alphabet[20] = 'u';
- 		alphabet[21] = 'v';
- 		alphabet[22] = 'w';
- 		alphabet[23] = 'x';
- 		alphabet[24] = 'y';
- 		alphabet[25] = 'z';
+ 		for(int i = 0; i < alphabet.length; i++) {
+ 			alphabet[i] = alphabetRef[i];
+ 		}
+ 		
+ 		guessed = new ArrayList<String>();
+ 		
+ 		
+ 		
  		
  		ident();
  		System.out.println("");
+ 		
+ 		
+ 		
  		printAlphabet('-');
 		beginGame();
 		
@@ -62,15 +57,97 @@ public class main {
 		word = "";
 		guessNumber = 0;
 		wrongGuesses = 0;
-		System.out.println("Created by Matt Bulley - 07 FEB 2018");
-		System.out.println("H A N G M A N");
-		printHangman7();
+		
 		System.out.println("");
+		printSpace(12); System.out.println(" ___");
+		printSpace(12); System.out.print("(   )                                                                                  \r\n");
+		printSpace(12); System.out.print(" | | .-.       .---.     ___ .-.       .--.      ___ .-. .-.       .---.     ___ .-.   \r\n");
+		printSpace(12); System.out.print(" | |/   \\     / .-, \\   (   )   \\     /    \\    (   )   '   \\     / .-, \\   (   )   \\  \r\n"); 
+		printSpace(12); System.out.print(" |  .-. .    (__) ; |    |  .-. .    ;  ,-. '    |  .-.  .-. ;   (__) ; |    |  .-. .  \r\n"); 
+		printSpace(12); System.out.print(" | |  | |      .'`  |    | |  | |    | |  | |    | |  | |  | |     .'`  |    | |  | |  \r\n"); 
+		printSpace(12); System.out.print(" | |  | |     / .'| |    | |  | |    | |  | |    | |  | |  | |    / .'| |    | |  | |  \r\n"); 
+		printSpace(12); System.out.print(" | |  | |    | /  | |    | |  | |    | |  | |    | |  | |  | |   | /  | |    | |  | |  \r\n"); 
+		printSpace(12); System.out.print(" | |  | |    ; |  ; |    | |  | |    | '  | |    | |  | |  | |   ; |  ; |    | |  | |  \r\n"); 
+		printSpace(12); System.out.print(" | |  | |    ' `-'  |    | |  | |    '  `-' |    | |  | |  | |   ' `-'  |    | |  | |  \r\n"); 
+		printSpace(12); System.out.print("(___)(___)   `.__.'_.   (___)(___)    `.__. |   (___)(___)(___)  `.__.'_.   (___)(___) \r\n"); 
+		printSpace(12); System.out.print("                                      ( `-' ;                                          \r\n"); 
+		printSpace(12); System.out.print("                                       `.__.                                           \r\n"); 
+		printSpace(12); System.out.println("");
+				
+		System.out.println("                          Created by Matt Bulley - 07 FEB 2018");
+		System.out.println("");
+		System.out.println("                          (enter \"quit\" to quit the program)");
+		printHangmanIdent();
+		System.out.println("");
+		//System.out.println("Please enter your name");
+		//System.out.println("");
+		//login(); Work in progress
 		difficultySelect(repeat);
 	}
 	
+	public static void login() {
+		scanner.reset();
+		
+		boolean incorrectInput = true;
+		String _name = "";
+		do {
+			System.out.println("");
+			
+			try {
+					_name = (scanner.nextLine());
+					incorrectInput = false;
+				} catch (Exception wrongInput) {
+					System.out.println("");
+					System.out.println("Incorrect input! Please enter a valid name");
+				}
+		} while (incorrectInput);
+		
+		
+		// READING FILE
+		// The name of the file to open.
+        String _fileName = _name + ".txt";
+
+        // This will reference one line at a time
+        String line = null;
+        String[] available = new String[466600];
+        int i = 0;
+        
+        try {
+            // FileReader reads text files in the default encoding.
+            FileReader fileReader = 
+                new FileReader(_fileName);
+
+            // Always wrap FileReader in BufferedReader.
+            BufferedReader bufferedReader = 
+                new BufferedReader(fileReader);
+
+            while((line = bufferedReader.readLine()) != null) {
+                
+                available[i] = line;
+                System.out.println(i + " " + available[i]);
+                i++;
+                
+            }   
+
+            // Always close files.
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+           writePlayerStats(_name, _fileName);          
+        }
+        catch(IOException ex) {
+            System.out.println(
+                "Error reading file '" 
+                + fileName + "'");                  
+            // Or we could just do this: 
+            // ex.printStackTrace();
+        }
+		
+	}
+	
 	public static void difficultySelect(boolean repeat) {
-		System.out.println("Pick difficulty: easy, medium, hard (1/2/3)");
+		printSpace(36); System.out.println("Pick difficulty:");
+		printSpace(36); System.out.println("easy, medium, hard (1/2/3)");
 		if(repeat)
 			scanner.reset();
 		
@@ -273,15 +350,23 @@ public class main {
 	{
 		boolean badInput = true;
 		char guess = '\0';
+		boolean newGuess = true;
+		String oldGuess = "";
 		
 		boolean sameInput = sameInput(guess);
 		
 			
-			while (badInput) {
-				
+			while (badInput)
+			{
 				guess = scanner.next().charAt(0);
 				guess = Character.toLowerCase(guess);
-				if(Character.isLetter(guess)) {
+				oldGuess = Character.toString(guess);
+				
+				if(guessed.contains(oldGuess)) {
+					newGuess = false;
+					System.out.println("");
+					System.out.println("Already guessed! Try Again.");
+				} else if(Character.isLetter(guess)) {
 					badInput = false;
 					
 				} else {
@@ -289,6 +374,9 @@ public class main {
 					System.out.println("");
 				}
 			}
+			
+			
+			
 			System.out.println("");
 			printAlphabet(guess);
 			sameInput = sameInput(guess);
@@ -298,7 +386,7 @@ public class main {
 			}
 		
 		
-		
+		guessed.add(oldGuess);
 		return guess;
 	}
 	
@@ -311,7 +399,8 @@ public class main {
 			System.out.print(alphabet[i] + "");
 			System.out.print("");
 		}
-
+		
+		System.out.println("");
 	}
 
 	public static boolean sameInput(char guess)
@@ -393,7 +482,6 @@ public class main {
 		return toString;
 	}
 	
-	
 	public static void printHangman1() 
 	{
 		// first wrong
@@ -472,4 +560,52 @@ public class main {
 		System.out.println("__|___");
 		System.out.println("|    |"); 
 	}
+	
+	public static void printHangmanIdent() {
+		// Final
+		printSpace(36); System.out.println("  _______");
+		printSpace(36); System.out.println("  |     |");
+		printSpace(36); System.out.println("  |     O");
+		printSpace(36); System.out.println("  |    /|\\");
+		printSpace(36); System.out.println("  |    / \\");
+		printSpace(36); System.out.println("  |");
+		printSpace(36); System.out.println(" _|___");
+		printSpace(36); System.out.println("|    |"); 
+	}
+	
+	public static void printSpace(int spaces) {
+		switch(spaces) {
+			case 36:
+				System.out.print("                                    ");
+				break;
+			case 12:
+				System.out.print("            ");
+				break;
+		}
+		
+	
+	}
+
+
+	public static void writePlayerStats(String _name, String _fileName) {
+		
+		try {
+			WriteFile data = new WriteFile(_fileName, true);
+			data.WriteToFile(_name);
+			data.WriteToFile("Games Played: ");
+			data.WriteToFile("Games Lost: ");
+			data.WriteToFile("Games Won: ");
+			data.WriteToFile("Win Percentage : ");
+			data.WriteToFile("Least Guesses: ");
+			data.WriteToFile("Most Guesses: ");
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		
+		System.out.println("Text File Written to");
+		
+	}
+	
 }
